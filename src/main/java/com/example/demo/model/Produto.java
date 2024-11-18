@@ -1,18 +1,19 @@
-package com.example.demo;
+package com.example.demo.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
 
-
-@Entity
 @Data
+@Entity
 public class Produto {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String nome;
     private String codigo;
-    private int quantidade;
-    private double preco;
-    
+    private Integer quantidade;
+    private Double preco;
+    private String marca;
+
 }
