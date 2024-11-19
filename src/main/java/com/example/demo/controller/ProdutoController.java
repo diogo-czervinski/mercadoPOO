@@ -36,12 +36,9 @@ public class ProdutoController {
 
     @PutMapping("/atualizar/quantidade")
     public ResponseEntity<Void> atualizarQuantidade(@RequestBody Produto produto) {
-        try {
-            produtoService.atualizarQuantidade(produto);
-            return ResponseEntity.ok().build();
-        } catch (Exception e) {
-            return ResponseEntity.status(500).build();
-        }
+        produtoService.atualizarQuantidade(produto);
+        return ResponseEntity.ok().build();
+
     }
 
 

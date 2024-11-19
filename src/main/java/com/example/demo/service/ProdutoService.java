@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.model.Produto;
 import com.example.demo.repository.IProdutoRepository;
+import org.apache.logging.log4j.util.InternalException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +14,6 @@ public class ProdutoService {
     @Autowired
     private IProdutoRepository produtoRepository;
 
-
     public Produto getByCodigo(String codigo){
         try{
             return produtoRepository.findByCodigo(codigo);
@@ -22,18 +22,23 @@ public class ProdutoService {
         }
     }
 
-
     public void atualizarQuantidade(Produto produtoAtualizado) {
-        Produto produtoExistente = (Produto) produtoRepository.findByCodigo(produtoAtualizado.getCodigo());
-        if (produtoExistente != null) {
-            // Subtraindo a quantidade vendida da quantidade existente
-            produtoExistente.setQuantidade(produtoExistente.getQuantidade() - produtoAtualizado.getQuantidade());
-            produtoRepository.save(produtoExistente);
-        } else {
-            throw new RuntimeException("Produto não encontrado");
+
+        try {
+            Produto produtoExistente = (Produto) produtoRepository.findByCodigo(produtoAtualizado.getCodigo());
+            if (produtoExistente != null) {
+                produtoExistente.setQuantidade(produtoExistente.getQuantidade() - produtoAtualizado.getQuantidade());
+                if(produtoExistente.getQuantidade()<0){
+                 throw new RuntimeException("Produto Sem estoque");
+                }
+                produtoRepository.save(produtoExistente);
+            } else {
+                throw new RuntimeException("Produto não encontrado");
+            }
+        } catch (Exception e) {
+            throw new InternalException("Deu ruim");
         }
     }
-
 
     public Produto save(Produto produto) {
 
@@ -44,15 +49,6 @@ public class ProdutoService {
         }
     }
 
-    public void deleteById(Long id) {
-        try{
-            produtoRepository.deleteById(id);
-        }catch (Exception e){
-            throw new RuntimeException("Deu merda aqui"+e.getMessage());
-        }
-    }
-
-
     public List<Produto> findByNome(String nome) {
 
         try{
@@ -62,4 +58,6 @@ public class ProdutoService {
         }
 
     }
+
+
 }
